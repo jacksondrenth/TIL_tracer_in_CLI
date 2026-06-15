@@ -27,11 +27,20 @@ def add(log, tag):
     # handle if tag is left out or not
     actual_tag = tag if tag else "Misc"
 
+    # If the file has data, extract the largest ID. Otherwise, start at 0.
+    if file_data:
+        largest_id = max(log.get("id", 0) for log in file_data)
+    else:
+        largest_id = 0
+
+    next_id = largest_id + 1
+
     # craete a dict to handle log data 
     new_log = {
+        "id" : next_id,
         "tag": actual_tag,
         "log": log,
-        "datestamp": dt.datetime.now().isoformat()
+        "datestamp": dt.datetime.now().strftime("%Y-%m-%d")
     }
 
     file_data.append(new_log)
