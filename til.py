@@ -1,11 +1,10 @@
 # TIL (Today I learned app)
 
-import click
-import json
-import datetime as dt
-import os
-from pprint import pprint
+from rich.console import Console
+from rich.table import Table
 from storage import save_entries, load_entries
+import click
+import datetime as dt
 
 # global variables
 til_file = "til.json"
@@ -54,10 +53,25 @@ def add(log, tag):
 @cli.command()
 def list():
     """Lists all entries in json file"""
+    # create table
+    table = Table(title="TIL Entries")
+    # create table columns
+    table.add_column("Datestamp", justify="center", style="cyan", no_wrap=True)
+    table.add_column("Entry", justify="center", style="magenta")
+    table.add_column("Tag", justify="center", style="green")
+    # load data
     file_data = load_entries(til_file)
-    
-    if file_data:
-        pprint(file_data)
+    # create rows
+    for entry in file_data["entries"]:
+
+        entry_tag = entry["tag"]
+        entry_log = entry["log"]
+        entry_date = entry["datestamp"]
+
+        table.add_row(entry_tag, entry_log, entry_date)
+
+    console = Console()
+    console.print(table)
 
 if __name__ == "__main__":
     cli()
